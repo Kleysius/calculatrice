@@ -1,0 +1,197 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat:400,700');
+
+
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-image: url(../img/calcul.jpg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 100vh;
+    font-family: 'Montserrat', sans-serif;
+}
+
+
+.container {
+    width: 300px;
+    background-color: #202020ee;
+    border-radius: 10px;
+    padding: 5px;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+
+h1 {
+    margin: 2px 0px 5px;
+    font-size: 15px;
+    font-weight: 500;
+    text-align: center;
+    color: #fff;
+}
+
+.resContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.result {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    color: #fff;
+    height: 100px;
+    border: none;
+    background-color: #343434cd;
+    border-radius: 5px;
+    margin-bottom: 3px;
+    width: 100%;
+}
+
+.button-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 3px;
+}
+
+button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #3b3b3bcd;
+    color: #fff;
+    font-size: 18px;
+    border: none;
+    border-radius: 5px;
+    padding: 15px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #2e2e2ef7;
+}
+
+button:active {
+    background-color: #262626f3;
+}
+
+#clear {
+    grid-column: 1 / span 3;
+    grid-row: 1;
+}
+
+#one {
+    grid-column: 1;
+    grid-row: 4;
+}
+
+#two {
+    grid-column: 2;
+    grid-row: 4;
+}
+
+#three {
+    grid-column: 3;
+    grid-row: 4;
+}
+
+#four {
+    grid-column: 1;
+    grid-row: 3;
+}
+
+#five {
+    grid-column: 2;
+    grid-row: 3;
+}
+
+#six {
+    grid-column: 3;
+    grid-row: 3;
+}
+
+#seven {
+    grid-column: 1;
+    grid-row: 2;
+}
+
+#eight {
+    grid-column: 2;
+    grid-row: 2;
+}
+
+#nine {
+    grid-column: 3;
+    grid-row: 2;
+}
+
+#zero {
+    grid-column: 1 / span 2;
+    grid-row: 5;
+}
+
+#comma {
+    grid-column: 3;
+    grid-row: 5;
+}
+
+#add {
+    grid-column: 4;
+    grid-row: 4;
+}
+
+#subtract {
+    grid-column: 4;
+    grid-row: 3;
+}
+
+#multiply {
+    grid-column: 4;
+    grid-row: 2;
+}
+
+#divide {
+    grid-column: 4;
+    grid-row: 1;
+}
+
+#equal {
+    grid-column: 4;
+    grid-row: 5;
+}
+
+#add,
+#subtract,
+#multiply,
+#divide {
+    background-color: #323232f6;
+}
+
+#equal {
+    background-color: #4cc3fff7;
+}
+
+#equal:hover {
+    background-color: #1db4fff8;
+}
+
+#equal:active {
+    background-color: #00a2fff7;
+}
+
+#add:hover,
+#subtract:hover,
+#multiply:hover,
+#divide:hover {
+    background-color: #3b3b3bf3;
+}
+
+#add:active,
+#subtract:active,
+#multiply:active,
+#divide:active {
+    background-color: #2a2a2af6;
+}
