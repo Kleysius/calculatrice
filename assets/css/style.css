@@ -1,14 +1,16 @@
 @import url('https://fonts.googleapis.com/css?family=Montserrat:400,700');
 
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
 body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-image: url(../img/calcul.jpg);
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
+    background-color: #202020;
     height: 100vh;
     font-family: 'Montserrat', sans-serif;
 }
