@@ -1,41 +1,158 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" data-theme="aurora">
 
-	<head>
-		<meta charset="UTF-8">
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<link rel="stylesheet" href="./assets/css/style.css">
-		<title>Calculatrice</title>
-	</head>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+	<meta name="description" content="Thomas Instruments TI-26 : une calculatrice scientifique élégante, utilisable au clavier et hors ligne.">
+	<meta name="theme-color" content="#0b0d17">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+	<title>Thomas Instruments · TI-26</title>
+	<link rel="icon" href="./assets/img/icon.svg" type="image/svg+xml">
+	<link rel="apple-touch-icon" href="./assets/img/icon.svg">
+	<link rel="manifest" href="./manifest.webmanifest">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=VT323&display=swap">
+	<link rel="stylesheet" href="./assets/css/style.css">
+	<script>
+		/* Applique le thème avant le premier rendu pour éviter le flash. */
+		(function () {
+			var theme;
+			try { theme = JSON.parse(localStorage.getItem('ti26:theme')); } catch (e) { }
+			if (!theme) theme = matchMedia('(prefers-color-scheme: light)').matches ? 'papier' : 'aurora';
+			document.documentElement.dataset.theme = theme;
+		})();
+	</script>
+</head>
 
-	<body>
-		<div class="container">
-			<h1>Thomas Instruments</h1>
-			<div class="resContainer">
-				<div class="result" id="containerResult"></div>
+<body>
+	<div class="backdrop" aria-hidden="true">
+		<span class="blob blob--1"></span>
+		<span class="blob blob--2"></span>
+		<span class="blob blob--3"></span>
+		<span class="horizon"></span>
+	</div>
+
+	<main class="calculator" id="calculator">
+		<header class="topbar">
+			<div class="brand">
+				<span class="brand-logo" aria-hidden="true">TI</span>
+				<span class="brand-text">
+					<strong>Thomas Instruments</strong>
+					<small>TI-26 · Solar Edition</small>
+				</span>
+				<span class="solar" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
 			</div>
-			<div class="button-container">
-				<button onclick="calc(this)" id="add">+</button>
-				<button onclick="calc(this)" id="subtract">-</button>
-				<button onclick="calc(this)" id="multiply">×</button>
-				<button onclick="calc(this)" id="divide">÷</button>
-				<button onclick="calc(this)" id="zero">0</button>
-				<button onclick="calc(this)" id="one">1</button>
-				<button onclick="calc(this)" id="two">2</button>
-				<button onclick="calc(this)" id="three">3</button>
-				<button onclick="calc(this)" id="four">4</button>
-				<button onclick="calc(this)" id="five">5</button>
-				<button onclick="calc(this)" id="six">6</button>
-				<button onclick="calc(this)" id="seven">7</button>
-				<button onclick="calc(this)" id="eight">8</button>
-				<button onclick="calc(this)" id="nine">9</button>
-				<button onclick="reset()" id="clear">C</button>
-				<button onclick="calc(this)" id="comma">,</button>
-				<button onclick="enjoy()" id="equal">=</button>
+			<nav class="tools" aria-label="Options">
+				<button class="tool" id="btn-sci" type="button" aria-pressed="false" title="Mode scientifique (M)">
+					<span class="tool-fx">ƒx</span>
+				</button>
+				<button class="tool" id="btn-history" type="button" aria-expanded="false" aria-controls="history" title="Historique (H)">
+					<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7" /><path d="M3 4v4.5h4.5" /><path d="M12 7.5V12l3 2" /></svg>
+					<span class="sr-only">Historique</span>
+				</button>
+				<button class="tool" id="btn-theme" type="button" title="Changer de thème (Maj + T)">
+					<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18c1.1 0 1.7-.8 1.7-1.7 0-.5-.2-.9-.5-1.2-.3-.3-.5-.7-.5-1.2 0-.9.8-1.7 1.7-1.7H16a5 5 0 0 0 5-5C21 6.4 17 3 12 3Z" /><circle cx="7.5" cy="11.5" r="1.2" /><circle cx="10" cy="7.5" r="1.2" /><circle cx="14.5" cy="7.5" r="1.2" /></svg>
+					<span class="sr-only">Changer de thème</span>
+				</button>
+			</nav>
+		</header>
+
+		<section class="display" id="display" aria-label="Écran">
+			<div class="display-meta">
+				<button class="chip" id="btn-angle" type="button" title="Degrés / radians (D)">DEG</button>
+				<span class="chip chip--muted" id="error-chip" hidden>ERREUR</span>
+			</div>
+			<div class="line line--expr" id="expr" aria-label="Expression"></div>
+			<div class="line line--result" id="result" role="status" aria-live="polite" title="Cliquer pour copier"></div>
+		</section>
+
+		<div class="sci" id="sci">
+			<div class="sci-inner">
+				<div class="keys keys--sci">
+					<button class="key key--sci" type="button" data-input="(" title="Parenthèse ouvrante ( ( )">(</button>
+					<button class="key key--sci" type="button" data-input=")" title="Parenthèse fermante ( ) )">)</button>
+					<button class="key key--sci" type="button" data-input="sq" title="Carré (Q)">x²</button>
+					<button class="key key--sci" type="button" data-input="^" title="Puissance ( ^ )">xʸ</button>
+					<button class="key key--sci" type="button" data-input="sqrt" title="Racine carrée (R)">√</button>
+					<button class="key key--sci" type="button" data-input="sin" title="Sinus (S)">sin</button>
+					<button class="key key--sci" type="button" data-input="cos" title="Cosinus (C)">cos</button>
+					<button class="key key--sci" type="button" data-input="tan" title="Tangente (T)">tan</button>
+					<button class="key key--sci" type="button" data-input="ln" title="Logarithme népérien (L)">ln</button>
+					<button class="key key--sci" type="button" data-input="log" title="Logarithme décimal (G)">log</button>
+					<button class="key key--sci" type="button" data-input="π" title="Pi (P)">π</button>
+					<button class="key key--sci" type="button" data-input="e" title="Nombre d’Euler (E)">e</button>
+					<button class="key key--sci" type="button" data-input="!" title="Factorielle ( ! )">n!</button>
+					<button class="key key--sci" type="button" data-input="inv" title="Inverse (I)">1/x</button>
+					<button class="key key--sci" type="button" data-input="ans" title="Dernier résultat (A)">Ans</button>
+				</div>
 			</div>
 		</div>
-	</body>
+
+		<div class="keys keys--main" id="keypad">
+			<button class="key key--fn" type="button" data-input="clear" title="Tout effacer (Échap)">AC</button>
+			<button class="key key--fn" type="button" data-input="back" title="Effacer (Retour arrière)" aria-label="Effacer">
+				<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5h11a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H9l-6-7 6-7Z" /><path d="m12.5 9.5 5 5m0-5-5 5" /></svg>
+			</button>
+			<button class="key key--fn" type="button" data-input="%" title="Pourcentage ( % )">%</button>
+			<button class="key key--op" type="button" data-input="/" title="Diviser ( / )" aria-label="Diviser">÷</button>
+			<button class="key key--num" type="button" data-input="7">7</button>
+			<button class="key key--num" type="button" data-input="8">8</button>
+			<button class="key key--num" type="button" data-input="9">9</button>
+			<button class="key key--op" type="button" data-input="*" title="Multiplier ( * )" aria-label="Multiplier">×</button>
+			<button class="key key--num" type="button" data-input="4">4</button>
+			<button class="key key--num" type="button" data-input="5">5</button>
+			<button class="key key--num" type="button" data-input="6">6</button>
+			<button class="key key--op" type="button" data-input="-" title="Soustraire ( - )" aria-label="Soustraire">−</button>
+			<button class="key key--num" type="button" data-input="1">1</button>
+			<button class="key key--num" type="button" data-input="2">2</button>
+			<button class="key key--num" type="button" data-input="3">3</button>
+			<button class="key key--op" type="button" data-input="+" title="Additionner ( + )" aria-label="Additionner">+</button>
+			<button class="key key--num" type="button" data-input="sign" title="Changer le signe (N)" aria-label="Changer le signe">±</button>
+			<button class="key key--num" type="button" data-input="0">0</button>
+			<button class="key key--num" type="button" data-input="." title="Virgule ( , )" aria-label="Virgule">,</button>
+			<button class="key key--eq" type="button" data-input="=" title="Égal (Entrée)" aria-label="Égal">=</button>
+		</div>
+
+		<aside class="history" id="history" aria-label="Historique" inert>
+			<div class="history-head">
+				<h2>Historique</h2>
+				<button class="text-btn" id="history-clear" type="button">Effacer</button>
+				<button class="tool" id="history-close" type="button" title="Fermer (Échap)">
+					<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" /></svg>
+					<span class="sr-only">Fermer</span>
+				</button>
+			</div>
+			<ul class="history-list" id="history-list"></ul>
+			<p class="history-empty" id="history-empty">Aucun calcul pour l’instant.<br>Vos résultats apparaîtront ici.</p>
+			<p class="history-tip">Astuce : appuyez sur <kbd>?</kbd> pour voir les raccourcis clavier.</p>
+		</aside>
+	</main>
+
+	<dialog class="help" id="help" aria-labelledby="help-title">
+		<h2 id="help-title">Raccourcis clavier</h2>
+		<dl>
+			<div><dt><kbd>0</kbd>–<kbd>9</kbd> <kbd>,</kbd></dt><dd>Chiffres et virgule</dd></div>
+			<div><dt><kbd>+</kbd> <kbd>-</kbd> <kbd>*</kbd> <kbd>/</kbd> <kbd>^</kbd></dt><dd>Opérations</dd></div>
+			<div><dt><kbd>(</kbd> <kbd>)</kbd> <kbd>%</kbd> <kbd>!</kbd></dt><dd>Parenthèses, pourcentage, factorielle</dd></div>
+			<div><dt><kbd>Entrée</kbd></dt><dd>Calculer</dd></div>
+			<div><dt><kbd>⌫</kbd> / <kbd>Échap</kbd></dt><dd>Effacer / tout effacer</dd></div>
+			<div><dt><kbd>S</kbd> <kbd>C</kbd> <kbd>T</kbd></dt><dd>sin, cos, tan</dd></div>
+			<div><dt><kbd>L</kbd> <kbd>G</kbd> <kbd>R</kbd> <kbd>Q</kbd></dt><dd>ln, log, √, x²</dd></div>
+			<div><dt><kbd>P</kbd> <kbd>E</kbd> <kbd>A</kbd> <kbd>N</kbd></dt><dd>π, e, Ans, ±</dd></div>
+			<div><dt><kbd>M</kbd> <kbd>D</kbd> <kbd>H</kbd></dt><dd>Mode scientifique, degrés/radians, historique</dd></div>
+			<div><dt><kbd>Maj</kbd> + <kbd>T</kbd></dt><dd>Changer de thème</dd></div>
+			<div><dt><kbd>Ctrl</kbd> + <kbd>C</kbd> / <kbd>V</kbd></dt><dd>Copier le résultat / coller un calcul</dd></div>
+		</dl>
+		<form method="dialog"><button class="text-btn">Compris</button></form>
+	</dialog>
+
+	<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+	<script src="./assets/javascript/engine.js"></script>
 	<script src="./assets/javascript/script.js"></script>
+</body>
 
 </html>

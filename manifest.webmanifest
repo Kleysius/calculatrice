@@ -1,0 +1,14 @@
+{
+  "name": "Thomas Instruments TI-26",
+  "short_name": "TI-26",
+  "description": "Calculatrice scientifique élégante, utilisable hors ligne.",
+  "lang": "fr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0b0d17",
+  "theme_color": "#0b0d17",
+  "icons": [
+    { "src": "assets/img/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
